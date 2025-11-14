@@ -18,6 +18,7 @@ pub mod signatures;
 pub mod subtenants;
 pub mod transactions;
 pub mod users;
+pub mod webhooks;
 
 pub use applications::*;
 #[cfg(feature = "axum")]
@@ -37,3 +38,4 @@ pub use signatures::*;
 pub use subtenants::*;
 pub use transactions::*;
 pub use users::*;
+pub use webhooks::*;
