@@ -268,7 +268,7 @@ impl RainClient {
     ///
     /// ```no_run
     /// use rain_sdk::{RainClient, Config, Environment, AuthConfig};
-    /// use rain_sdk::models::cards::{UpdateCardPinRequest, EncryptedPin};
+    /// use rain_sdk::models::cards::{UpdateCardPinRequest, EncryptedData};
     /// use uuid::Uuid;
     ///
     /// # #[cfg(feature = "async")]
@@ -280,7 +280,7 @@ impl RainClient {
     /// let card_id = Uuid::new_v4();
     /// let session_id = "your-session-id".to_string();
     /// let request = UpdateCardPinRequest {
-    ///     encrypted_pin: EncryptedPin {
+    ///     encrypted_pin: EncryptedData {
     ///         iv: "initialization-vector".to_string(),
     ///         data: "encrypted-data".to_string(),
     ///     },

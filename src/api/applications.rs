@@ -4,24 +4,9 @@
 //!
 //! # Examples
 //!
-//! ```no_run
-//! use rain_sdk::{RainClient, Config, Environment, AuthConfig};
-//! use rain_sdk::models::applications::*;
-//! use uuid::Uuid;
+//! This module provides functionality to manage company and user applications.
 //!
-//! # #[cfg(feature = "async")]
-//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
-//! let config = Config::new(Environment::Dev);
-//! let auth = AuthConfig::with_api_key("your-api-key".to_string());
-//! let client = RainClient::new(config, auth)?;
-//!
-//! // Create a company application
-//! let company_id = Uuid::new_v4();
-//! let application = client.create_company_application(&request).await?;
-//! println!("Application: {:?}", application);
-//! # Ok(())
-//! # }
-//! ```
+//! See the individual function documentation for examples.
 
 use crate::client::RainClient;
 use crate::error::Result;
@@ -47,7 +32,8 @@ impl RainClient {
     ///
     /// ```no_run
     /// use rain_sdk::{RainClient, Config, Environment, AuthConfig};
-    /// use rain_sdk::models::applications::CreateCompanyApplicationRequest;
+    /// use rain_sdk::models::applications::*;
+    /// use rain_sdk::models::common::*;
     ///
     /// # #[cfg(feature = "async")]
     /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
@@ -55,7 +41,9 @@ impl RainClient {
     /// let auth = AuthConfig::with_api_key("your-api-key".to_string());
     /// let client = RainClient::new(config, auth)?;
     ///
-    /// let request = CreateCompanyApplicationRequest { /* ... */ };
+    /// // Note: In practice, you would populate all required fields.
+    /// // This is a simplified example - see the full struct definitions for required fields.
+    /// # let request = todo!();
     /// let application = client.create_company_application(&request).await?;
     /// # Ok(())
     /// # }
@@ -130,7 +118,11 @@ impl RainClient {
     /// let client = RainClient::new(config, auth)?;
     ///
     /// let company_id = Uuid::new_v4();
-    /// let request = UpdateCompanyApplicationRequest { /* ... */ };
+    /// let request = UpdateCompanyApplicationRequest {
+    ///     name: Some("Updated Name".to_string()),
+    ///     address: None,
+    ///     entity: None,
+    /// };
     /// let application = client.update_company_application(&company_id, &request).await?;
     /// # Ok(())
     /// # }
@@ -172,7 +164,15 @@ impl RainClient {
     ///
     /// let company_id = Uuid::new_v4();
     /// let ubo_id = Uuid::new_v4();
-    /// let request = UpdateUltimateBeneficialOwnerRequest { /* ... */ };
+    /// let request = UpdateUltimateBeneficialOwnerRequest {
+    ///     first_name: Some("John".to_string()),
+    ///     last_name: Some("Doe".to_string()),
+    ///     birth_date: None,
+    ///     national_id: None,
+    ///     country_of_issue: None,
+    ///     email: None,
+    ///     address: None,
+    /// };
     /// let application = client.update_ultimate_beneficial_owner(&company_id, &ubo_id, &request).await?;
     /// # Ok(())
     /// # }
@@ -313,7 +313,23 @@ impl RainClient {
     /// let auth = AuthConfig::with_api_key("your-api-key".to_string());
     /// let client = RainClient::new(config, auth)?;
     ///
-    /// let request = CreateUserApplicationRequest { /* ... */ };
+    /// let request = CreateUserApplicationRequest {
+    ///     ip_address: "127.0.0.1".to_string(),
+    ///     occupation: "Engineer".to_string(),
+    ///     annual_salary: "100000".to_string(),
+    ///     account_purpose: "Business".to_string(),
+    ///     expected_monthly_volume: "5000".to_string(),
+    ///     is_terms_of_service_accepted: true,
+    ///     sumsub_share_token: "token".to_string(),
+    ///     wallet_address: None,
+    ///     solana_address: None,
+    ///     tron_address: None,
+    ///     stellar_address: None,
+    ///     chain_id: None,
+    ///     contract_address: None,
+    ///     source_key: None,
+    ///     has_existing_documents: None,
+    /// };
     /// let application = client.create_user_application(&request).await?;
     /// # Ok(())
     /// # }
@@ -350,9 +366,9 @@ impl RainClient {
     /// let client = RainClient::new(config, auth)?;
     ///
     /// let request = InitiateUserApplicationRequest {
-    ///     first_name: "John".to_string(),
-    ///     last_name: "Doe".to_string(),
-    ///     email: "john@example.com".to_string(),
+    ///     first_name: Some("John".to_string()),
+    ///     last_name: Some("Doe".to_string()),
+    ///     email: Some("john@example.com".to_string()),
     ///     wallet_address: None,
     /// };
     /// let application = client.initiate_user_application(&request).await?;
@@ -426,7 +442,21 @@ impl RainClient {
     /// let client = RainClient::new(config, auth)?;
     ///
     /// let user_id = Uuid::new_v4();
-    /// let request = UpdateUserApplicationRequest { /* ... */ };
+    /// let request = UpdateUserApplicationRequest {
+    ///     first_name: Some("John".to_string()),
+    ///     last_name: None,
+    ///     birth_date: None,
+    ///     national_id: None,
+    ///     country_of_issue: None,
+    ///     address: None,
+    ///     ip_address: None,
+    ///     occupation: None,
+    ///     annual_salary: None,
+    ///     account_purpose: None,
+    ///     expected_monthly_volume: None,
+    ///     is_terms_of_service_accepted: None,
+    ///     has_existing_documents: None,
+    /// };
     /// let application = client.update_user_application(&user_id, &request).await?;
     /// # Ok(())
     /// # }
