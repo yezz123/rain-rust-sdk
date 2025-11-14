@@ -563,7 +563,10 @@ impl RainClient {
         } else {
             // Try to parse as error response
             match serde_json::from_str::<crate::error::ApiErrorResponse>(&text) {
-                Ok(api_error) => Err(RainError::ApiError(Box::new(api_error))),
+                Ok(api_error) => Err(RainError::ApiError {
+                    status: status.as_u16(),
+                    response: Box::new(api_error),
+                }),
                 Err(_) => Err(RainError::Other(anyhow::anyhow!(
                     "HTTP {} from {}: {}",
                     status,
@@ -607,7 +610,10 @@ impl RainClient {
         } else {
             // Try to parse as error response
             match serde_json::from_str::<crate::error::ApiErrorResponse>(&text) {
-                Ok(api_error) => Err(RainError::ApiError(Box::new(api_error))),
+                Ok(api_error) => Err(RainError::ApiError {
+                    status: status.as_u16(),
+                    response: Box::new(api_error),
+                }),
                 Err(_) => Err(RainError::Other(anyhow::anyhow!("HTTP {status}: {text}"))),
             }
         }
