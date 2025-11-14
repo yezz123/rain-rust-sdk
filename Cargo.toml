@@ -1,0 +1,91 @@
+[package]
+name = "rain-sdk"
+version = "1.0.0"
+edition = "2021"
+authors = ["Yezz123 <hello@yezz.me>"]
+description = "A modern, type-safe Rust SDK for the Rain xyz API"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yezz123/rain-rust-sdk"
+documentation = "https://docs.rs/rain-sdk"
+readme = "README.md"
+keywords = ["rain", "sdk", "crypto", "payments", "fintech"]
+categories = ["api-bindings", "web-programming", "authentication"]
+
+[package.metadata.docs.rs]
+features = ["async", "rustls-tls"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[features]
+default = ["async", "rustls-tls"]
+async = ["reqwest/rustls-tls", "tokio/full"]
+sync = ["reqwest/blocking", "reqwest/rustls-tls"]
+rustls-tls = ["reqwest/rustls-tls"]
+native-tls = ["reqwest/native-tls"]
+gzip = ["reqwest/gzip"]
+axum = ["utoipa", "utoipa-gen", "utoipa-config", "utoipa-axum"]
+
+[dependencies]
+# HTTP client
+reqwest = { version = "0.12", default-features = false, features = [
+  "json",
+  "multipart",
+] }
+tokio = { version = "1.0", features = ["rt", "time"], optional = true }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", default-features = false }
+serde_urlencoded = "0.7"
+
+# Date/time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# UUID support
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Authentication (JWT signing)
+base64 = "0.22"
+hmac = "0.12"
+sha2 = "0.10"
+
+# URL parsing
+url = "2.5"
+
+# Axum integration (optional)
+utoipa = { version = "5.4.0", optional = true }
+utoipa-axum = { version = "0.2.0", optional = true }
+utoipa-config = { version = "0.1.2", optional = true }
+utoipa-gen = { version = "5.4.0", optional = true }
+
+[dev-dependencies]
+tokio-test = "0.4"
+mockito = "1.2"
+serde_test = "1.0"
+
+[lib]
+name = "rain_sdk"
+path = "src/lib.rs"
+
+[[example]]
+name = "basic_client"
+path = "examples/basic_client.rs"
+
+[[example]]
+name = "initiate_user_application"
+path = "examples/initiate_user_application.rs"
+
+[[example]]
+name = "signup_consumer"
+path = "examples/signup_consumer.rs"
+
+[[example]]
+name = "signup_corporate"
+path = "examples/signup_corporate.rs"
+
+[[example]]
+name = "manage_corporate_users"
+path = "examples/manage_corporate_users.rs"
