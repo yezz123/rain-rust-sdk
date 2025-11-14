@@ -36,15 +36,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     // Then, complete the application with additional information
-    // Note: In a real scenario, you would get the sumsub_share_token from SumSub integration
+    // Note: This example uses the Sumsub Share Token verification method.
+    // You can also use Persona Share Token or provide full person data (API method).
     let application_request = CreateUserApplicationRequest {
+        // Verification method: Using Sumsub Share Token
+        // In a real scenario, you would get the sumsub_share_token from SumSub integration
+        sumsub_share_token: Some("sumsub-token-123".to_string()),
+        persona_share_token: None,
+        // Person data fields (not needed when using token verification)
+        id: None,
+        first_name: None,
+        last_name: None,
+        birth_date: None,
+        national_id: None,
+        country_of_issue: None,
+        email: None,
+        phone_country_code: None,
+        phone_number: None,
+        address: None,
+        // Required fields
         ip_address: "192.168.1.1".to_string(), // Required: User's IP address
         occupation: "Software Engineer".to_string(),
         annual_salary: "100000".to_string(), // Amount in cents as string
         account_purpose: "Personal use".to_string(),
         expected_monthly_volume: "5000".to_string(), // Amount in cents as string
         is_terms_of_service_accepted: true,
-        sumsub_share_token: "sumsub-token-123".to_string(), // Required: From SumSub integration
+        // Optional fields
         wallet_address: Some("0x1234567890abcdef1234567890abcdef12345678".to_string()),
         solana_address: None,
         tron_address: None,
@@ -118,7 +135,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(status) = updated_user.application_status {
         if matches!(
             status,
-            ApplicationStatus::InReview | ApplicationStatus::Pending
+            ApplicationStatus::ManualReview | ApplicationStatus::Pending
         ) {
             println!("\nStep 4: Updating application with additional information...");
 
@@ -170,11 +187,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("✅ Application approved! User can now use the card.");
                 break;
             }
-            ApplicationStatus::Rejected => {
-                println!("❌ Application rejected.");
+            ApplicationStatus::Denied => {
+                println!("❌ Application denied.");
                 break;
             }
-            ApplicationStatus::InReview | ApplicationStatus::Pending => {
+            ApplicationStatus::Canceled => {
+                println!("❌ Application canceled.");
+                break;
+            }
+            ApplicationStatus::ManualReview | ApplicationStatus::Pending => {
                 // Check if additional verification is needed
                 if let Some(link) = user.application_external_verification_link {
                     println!("⏳ Additional verification required.");
@@ -187,6 +208,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 println!("⏳ Still processing... Waiting 5 seconds before next check.");
                 tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+            }
+            ApplicationStatus::NeedsInformation | ApplicationStatus::NeedsVerification => {
+                println!("⏳ Application needs more information or verification.");
+                println!("Check application links for next steps.");
+                if let Some(link) = user.application_external_verification_link {
+                    println!("Verification URL: {}", link.url);
+                }
+                if let Some(link) = user.application_completion_link {
+                    println!("Completion URL: {}", link.url);
+                }
+                tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+            }
+            ApplicationStatus::Locked => {
+                println!("🔒 Application is locked.");
+                break;
             }
         }
     }

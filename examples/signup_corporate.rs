@@ -202,7 +202,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let Some(status) = updated_company.application_status {
         if matches!(
             status,
-            ApplicationStatus::InReview | ApplicationStatus::Pending
+            ApplicationStatus::ManualReview | ApplicationStatus::Pending
         ) {
             println!("\nStep 4: Updating application with additional information...");
 
@@ -244,11 +244,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("✅ Application approved! Company can now use cards.");
                 break;
             }
-            ApplicationStatus::Rejected => {
-                println!("❌ Application rejected.");
+            ApplicationStatus::Denied => {
+                println!("❌ Application denied.");
                 break;
             }
-            ApplicationStatus::InReview | ApplicationStatus::Pending => {
+            ApplicationStatus::Canceled => {
+                println!("❌ Application canceled.");
+                break;
+            }
+            ApplicationStatus::ManualReview | ApplicationStatus::Pending => {
                 // Check if additional verification is needed
                 if let Some(link) = company.application_external_verification_link {
                     println!("⏳ Additional verification required.");
@@ -261,6 +265,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 println!("⏳ Still processing... Waiting 5 seconds before next check.");
                 tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+            }
+            ApplicationStatus::NeedsInformation | ApplicationStatus::NeedsVerification => {
+                println!("⏳ Application needs more information or verification.");
+                println!("Check application links for next steps.");
+                if let Some(link) = company.application_external_verification_link {
+                    println!("Verification URL: {}", link.url);
+                }
+                if let Some(link) = company.application_completion_link {
+                    println!("Completion URL: {}", link.url);
+                }
+                tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+            }
+            ApplicationStatus::Locked => {
+                println!("🔒 Application is locked.");
+                break;
             }
         }
     }
