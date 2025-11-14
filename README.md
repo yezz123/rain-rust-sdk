@@ -16,11 +16,13 @@ A modern, type-safe Rust SDK for the [Rain Cards API](https://raincards.xyz).
 
 ## Features
 
+- ✅ **100% API Coverage**: All 71 non-deprecated endpoints fully implemented
+- ✅ **OpenAPI Aligned**: Fully aligned with the official OpenAPI specification
 - ✅ **Async and Sync Support**: Use async/await or blocking operations via feature flags
-- ✅ **Type Safety**: Strongly typed models for all API endpoints
+- ✅ **Type Safety**: Strongly typed models for all API endpoints with proper serialization
 - ✅ **API Key Authentication**: Simple API key-based authentication
-- ✅ **Comprehensive Error Handling**: Detailed error types with context
-- ✅ **Production Ready**: Well-tested and documented
+- ✅ **Comprehensive Error Handling**: Detailed error types with HTTP status codes and context
+- ✅ **Production Ready**: Well-tested, documented, and validated
 
 ## Installation
 
@@ -124,35 +126,135 @@ cargo run --example signup_consumer --features async
 
 ## API Coverage
 
-The SDK provides typed methods for all major Rain API endpoints:
+The SDK provides **100% coverage** of the Rain Issuing API, with all 71 non-deprecated endpoints fully implemented and aligned with the OpenAPI specification.
 
-### Company Applications
+### Applications
 
-- **Create Company Application**: Create a new company application
-- **Get Company Application**: Retrieve company application by ID
-- **Update Company Application**: Update company application details
-- **Update UBO**: Update ultimate beneficial owner information
-- **Upload Company Document**: Upload documents for company verification
-- **Upload UBO Document**: Upload documents for UBO verification
+**Company Applications:**
 
-### User Applications
+- Create, get, and update company applications
+- Update ultimate beneficial owner (UBO) information
+- Upload company and UBO documents
 
-- **Create User Application**: Create a new user application
-- **Initiate User Application**: Initiate a user application with basic info
-- **Get User Application**: Retrieve user application by ID
-- **Update User Application**: Update user application details
-- **Upload User Document**: Upload documents for user verification
+**User Applications:**
+
+- Create user applications (supports Sumsub, Persona, and full API verification methods)
+- Initiate user applications
+- Get and update user applications
+- Upload user documents
+
+### Cards
+
+- List and get cards
+- Create cards for users (virtual and physical)
+- Update card status, limits, and billing addresses
+- Get encrypted card secrets (PAN, CVC, PIN)
+- Get card processor details
+- Update card PIN
+
+### Companies
+
+- List and get companies
+- Update company information
+- Create users in companies
+- Get company balances
+- Create company charges (custom fees)
+- Get company contracts
+- Create company contracts
+- Initiate company payments
+- Get payment and withdrawal signatures
+
+### Users
+
+- List and get users
+- Create authorized users
+- Update and delete users
+- Get user balances
+- Create user charges (custom fees)
+- Get user contracts
+- Create user contracts
+- Create user cards
+- Initiate user payments
+- Get payment and withdrawal signatures
+
+### Transactions
+
+- List and get transactions
+- Update transaction memos
+- Create disputes for transactions
+- Get and upload transaction receipts
+
+### Disputes
+
+- List and get disputes
+- Update disputes
+- Get and upload dispute evidence
+
+### Contracts
+
+- Get contracts for companies and users
+- Create contracts
+- Update contract settings (onramp configuration)
+
+### Payments
+
+- Initiate payments for companies, users, and authorized user tenants
+- Get payment addresses
+
+### Signatures
+
+- Get payment signatures for companies, users, and authorized user tenants
+- Get withdrawal signatures for companies, users, and authorized user tenants
+
+### Balances
+
+- Get tenant balances
+- Get company balances
+- Get user balances
+
+### Keys
+
+- Create API keys
+- Delete API keys
+
+### Shipping Groups
+
+- Create bulk shipping groups
+- List and get shipping groups
+
+### Subtenants
+
+- Create, list, get, and update subtenants
+
+### Reports
+
+- Get tenant reports (CSV, JSON, or ZIP format)
+
+### Webhooks
+
+- List webhooks with filtering
+- Get webhook by ID
 
 ## Error Handling
 
-The SDK uses a comprehensive error type system:
+The SDK uses a comprehensive error type system with detailed HTTP status codes:
 
 ```rust
 use rain_sdk::error::RainError;
 
 match client.get_user_application(&user_id).await {
     Ok(application) => println!("Success: {:?}", application),
-    Err(RainError::ApiError(err)) => println!("API error: {}", err),
+    Err(RainError::ApiError { status, response }) => {
+        println!("API error (status {}): {}", status, response);
+        // Common status codes:
+        // - 400: Invalid request
+        // - 401: Invalid authorization
+        // - 403: Forbidden
+        // - 404: Not found
+        // - 409: Conflict
+        // - 423: Locked
+        // - 500: Internal server error
+    },
     Err(RainError::HttpError(err)) => println!("HTTP error: {}", err),
     Err(RainError::AuthError(msg)) => println!("Auth error: {}", msg),
     Err(e) => println!("Other error: {}", e),
