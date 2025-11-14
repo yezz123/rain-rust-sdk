@@ -128,112 +128,72 @@ cargo run --example signup_consumer --features async
 
 The SDK provides **100% coverage** of the Rain Issuing API, with all 71 non-deprecated endpoints fully implemented and aligned with the OpenAPI specification.
 
-### Applications
-
-**Company Applications:**
-
-- Create, get, and update company applications
-- Update ultimate beneficial owner (UBO) information
-- Upload company and UBO documents
-
-**User Applications:**
-
-- Create user applications (supports Sumsub, Persona, and full API verification methods)
-- Initiate user applications
-- Get and update user applications
-- Upload user documents
-
-### Cards
-
-- List and get cards
-- Create cards for users (virtual and physical)
-- Update card status, limits, and billing addresses
-- Get encrypted card secrets (PAN, CVC, PIN)
-- Get card processor details
-- Update card PIN
-
-### Companies
-
-- List and get companies
-- Update company information
-- Create users in companies
-- Get company balances
-- Create company charges (custom fees)
-- Get company contracts
-- Create company contracts
-- Initiate company payments
-- Get payment and withdrawal signatures
-
-### Users
-
-- List and get users
-- Create authorized users
-- Update and delete users
-- Get user balances
-- Create user charges (custom fees)
-- Get user contracts
-- Create user contracts
-- Create user cards
-- Initiate user payments
-- Get payment and withdrawal signatures
-
-### Transactions
-
-- List and get transactions
-- Update transaction memos
-- Create disputes for transactions
-- Get and upload transaction receipts
-
-### Disputes
-
-- List and get disputes
-- Update disputes
-- Get and upload dispute evidence
-
-### Contracts
-
-- Get contracts for companies and users
-- Create contracts
-- Update contract settings (onramp configuration)
-
-### Payments
-
-- Initiate payments for companies, users, and authorized user tenants
-- Get payment addresses
-
-### Signatures
-
-- Get payment signatures for companies, users, and authorized user tenants
-- Get withdrawal signatures for companies, users, and authorized user tenants
-
-### Balances
-
-- Get tenant balances
-- Get company balances
-- Get user balances
-
-### Keys
-
-- Create API keys
-- Delete API keys
-
-### Shipping Groups
-
-- Create bulk shipping groups
-- List and get shipping groups
-
-### Subtenants
-
-- Create, list, get, and update subtenants
-
-### Reports
-
-- Get tenant reports (CSV, JSON, or ZIP format)
-
-### Webhooks
-
-- List webhooks with filtering
-- Get webhook by ID
+| Category | Endpoints | Description |
+|----------|-----------|-------------|
+| **Applications** | | |
+| Company Applications | Create, Get, Update | Manage company applications and ultimate beneficial owners (UBOs) |
+| | Update UBO | Update UBO information |
+| | Upload Documents | Upload company and UBO verification documents |
+| User Applications | Create | Create user applications (supports Sumsub, Persona, and full API verification) |
+| | Initiate, Get, Update | Manage user application lifecycle |
+| | Upload Documents | Upload user verification documents |
+| **Cards** | | |
+| | List, Get | Retrieve card information |
+| | Create | Create virtual and physical cards for users |
+| | Update | Update card status, limits, and billing addresses |
+| | Get Secrets | Retrieve encrypted PAN, CVC, and PIN |
+| | Get Processor Details | Get processor card ID and time-based secrets |
+| | Update PIN | Update card PIN |
+| **Companies** | | |
+| | List, Get, Update | Manage company information |
+| | Create Users | Add users to companies |
+| | Get Balances | Retrieve company credit balances |
+| | Create Charges | Apply custom fees to companies |
+| | Get/Create Contracts | Manage smart contracts |
+| | Initiate Payments | Process company payments |
+| | Get Signatures | Get payment and withdrawal signatures |
+| **Users** | | |
+| | List, Get, Create, Update, Delete | Full user lifecycle management |
+| | Get Balances | Retrieve user credit balances |
+| | Create Charges | Apply custom fees to users |
+| | Get/Create Contracts | Manage user smart contracts |
+| | Create Cards | Issue cards to users |
+| | Initiate Payments | Process user payments |
+| | Get Signatures | Get payment and withdrawal signatures |
+| **Transactions** | | |
+| | List, Get | Retrieve transaction history |
+| | Update | Update transaction memos |
+| | Create Disputes | Create disputes for transactions |
+| | Get/Upload Receipts | Manage transaction receipts |
+| **Disputes** | | |
+| | List, Get | Retrieve dispute information |
+| | Update | Update dispute status and evidence |
+| | Get/Upload Evidence | Manage dispute file evidence |
+| **Contracts** | | |
+| | Get | Retrieve contracts for companies and users |
+| | Create | Deploy new smart contracts |
+| | Update | Update contract settings (onramp configuration) |
+| **Payments** | | |
+| | Initiate | Process payments for companies, users, and tenants |
+| | Get Address | Retrieve payment destination addresses |
+| **Signatures** | | |
+| | Get Payment Signatures | Retrieve payment signatures for smart contract interactions |
+| | Get Withdrawal Signatures | Retrieve withdrawal signatures for smart contract interactions |
+| **Balances** | | |
+| | Get Tenant Balances | Retrieve overall tenant credit information |
+| | Get Company Balances | Retrieve company-specific balances |
+| | Get User Balances | Retrieve user-specific balances |
+| **Keys** | | |
+| | Create | Generate new API keys |
+| | Delete | Revoke API keys |
+| **Shipping Groups** | | |
+| | Create, List, Get | Manage bulk shipping groups for physical cards |
+| **Subtenants** | | |
+| | Create, List, Get, Update | Manage subtenant accounts |
+| **Reports** | | |
+| | Get Reports | Download tenant reports (CSV, JSON, or ZIP format) |
+| **Webhooks** | | |
+| | List, Get | Retrieve webhook information with filtering |
 
 ## Error Handling
 
