@@ -44,5 +44,5 @@ pub use error::{RainError, Result};
 // Re-export API modules
 pub use api::{
     applications, balances, cards, companies, contracts, disputes, keys, payments, reports,
-    shipping_groups, signatures, subtenants, transactions, users,
+    shipping_groups, signatures, subtenants, transactions, users, webhooks,
 };

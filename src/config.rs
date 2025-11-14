@@ -73,10 +73,10 @@ impl Environment {
     pub fn base_url(&self) -> Url {
         match self {
             Environment::Dev => {
-                Url::parse("https://api-dev.raincards.xyz/v1").expect("Invalid dev URL")
+                Url::parse("https://api-dev.raincards.xyz/v1/issuing").expect("Invalid dev URL")
             }
             Environment::Production => {
-                Url::parse("https://api.raincards.xyz/v1").expect("Invalid production URL")
+                Url::parse("https://api.raincards.xyz/v1/issuing").expect("Invalid production URL")
             }
             Environment::Custom(url) => url.clone(),
         }
