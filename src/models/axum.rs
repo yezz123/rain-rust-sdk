@@ -8,13 +8,16 @@
 
 #[cfg(feature = "axum")]
 use crate::models::applications::{
-    CreateCompanyApplicationRequest, CreateUserApplicationRequest, InitiateUserApplicationRequest,
-    UpdateCompanyApplicationRequest, UpdateUserApplicationRequest,
+    CompanyApplicationResponse, CreateCompanyApplicationRequest, CreateUserApplicationRequest,
+    InitiateUserApplicationRequest, UpdateCompanyApplicationRequest, UpdateUserApplicationRequest,
+    UserApplicationResponse,
 };
 #[cfg(feature = "axum")]
 use crate::models::balances::BalanceResponse;
 #[cfg(feature = "axum")]
-use crate::models::cards::{Card, CreateCardRequest, ListCardsParams, UpdateCardRequest};
+use crate::models::cards::{
+    Card, CardSecrets, CreateCardRequest, ListCardsParams, UpdateCardRequest,
+};
 #[cfg(feature = "axum")]
 use crate::models::charges::CreateChargeRequest;
 #[cfg(feature = "axum")]
@@ -54,6 +57,8 @@ use crate::models::users::CreateCompanyUserRequest;
 use crate::models::users::{CreateUserRequest, ListUsersParams, UpdateUserRequest, User};
 #[cfg(feature = "axum")]
 use serde::{Deserialize, Serialize};
+#[cfg(feature = "axum")]
+use utoipa::ToSchema;
 
 // ============================================================================
 // Request Wrapper Types (for Deserialization)
@@ -62,9 +67,27 @@ use serde::{Deserialize, Serialize};
 // Applications
 /// Wrapper for InitiateUserApplicationRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct InitiateUserApplicationRequestWrapper(pub InitiateUserApplicationRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct InitiateUserApplicationRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<InitiateUserApplicationRequestWrapper> for InitiateUserApplicationRequest {
+    fn from(wrapper: InitiateUserApplicationRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner).unwrap_or_else(|_| {
+            // Fallback to default if deserialization fails
+            InitiateUserApplicationRequest {
+                first_name: None,
+                last_name: None,
+                email: None,
+                wallet_address: None,
+            }
+        })
+    }
+}
 
 /// Wrapper for CreateUserApplicationRequest that implements Deserialize
 #[cfg(feature = "axum")]
@@ -74,34 +97,100 @@ pub struct CreateUserApplicationRequestWrapper(pub CreateUserApplicationRequest)
 
 /// Wrapper for UpdateUserApplicationRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct UpdateUserApplicationRequestWrapper(pub UpdateUserApplicationRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct UpdateUserApplicationRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<UpdateUserApplicationRequestWrapper> for UpdateUserApplicationRequest {
+    fn from(wrapper: UpdateUserApplicationRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner).unwrap_or_else(|_| UpdateUserApplicationRequest {
+            first_name: None,
+            last_name: None,
+            birth_date: None,
+            national_id: None,
+            country_of_issue: None,
+            address: None,
+            ip_address: None,
+            occupation: None,
+            annual_salary: None,
+            account_purpose: None,
+            expected_monthly_volume: None,
+            is_terms_of_service_accepted: None,
+            has_existing_documents: None,
+        })
+    }
+}
 
 /// Wrapper for CreateCompanyApplicationRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct CreateCompanyApplicationRequestWrapper(pub CreateCompanyApplicationRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct CreateCompanyApplicationRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<CreateCompanyApplicationRequestWrapper> for CreateCompanyApplicationRequest {
+    fn from(wrapper: CreateCompanyApplicationRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner)
+            .expect("Failed to deserialize CreateCompanyApplicationRequest")
+    }
+}
 
 /// Wrapper for UpdateCompanyApplicationRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct UpdateCompanyApplicationRequestWrapper(pub UpdateCompanyApplicationRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct UpdateCompanyApplicationRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<UpdateCompanyApplicationRequestWrapper> for UpdateCompanyApplicationRequest {
+    fn from(wrapper: UpdateCompanyApplicationRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner)
+            .expect("Failed to deserialize UpdateCompanyApplicationRequest")
+    }
+}
 
 // Cards
 /// Wrapper for CreateCardRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct CreateCardRequestWrapper(pub CreateCardRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct CreateCardRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<CreateCardRequestWrapper> for CreateCardRequest {
+    fn from(wrapper: CreateCardRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner).expect("Failed to deserialize CreateCardRequest")
+    }
+}
 
 /// Wrapper for UpdateCardRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct UpdateCardRequestWrapper(pub UpdateCardRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct UpdateCardRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<UpdateCardRequestWrapper> for UpdateCardRequest {
+    fn from(wrapper: UpdateCardRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner).expect("Failed to deserialize UpdateCardRequest")
+    }
+}
 
 // Charges
 /// Wrapper for CreateChargeRequest that implements Deserialize
@@ -119,9 +208,20 @@ pub struct UpdateCompanyRequestWrapper(pub UpdateCompanyRequest);
 
 /// Wrapper for CreateCompanyUserRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct CreateCompanyUserRequestWrapper(pub CreateCompanyUserRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct CreateCompanyUserRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<CreateCompanyUserRequestWrapper> for CreateCompanyUserRequest {
+    fn from(wrapper: CreateCompanyUserRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner)
+            .expect("Failed to deserialize CreateCompanyUserRequest")
+    }
+}
 
 // Contracts
 /// Wrapper for CreateCompanyContractRequest that implements Deserialize
@@ -172,9 +272,20 @@ pub struct InitiatePaymentRequestWrapper(pub InitiatePaymentRequest);
 // Shipping Groups
 /// Wrapper for CreateShippingGroupRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct CreateShippingGroupRequestWrapper(pub CreateShippingGroupRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct CreateShippingGroupRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<CreateShippingGroupRequestWrapper> for CreateShippingGroupRequest {
+    fn from(wrapper: CreateShippingGroupRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner)
+            .expect("Failed to deserialize CreateShippingGroupRequest")
+    }
+}
 
 // Subtenants
 /// Wrapper for CreateSubtenantRequest that implements Deserialize
@@ -205,29 +316,116 @@ pub struct CreateUserRequestWrapper(pub CreateUserRequest);
 
 /// Wrapper for UpdateUserRequest that implements Deserialize
 #[cfg(feature = "axum")]
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct UpdateUserRequestWrapper(pub UpdateUserRequest);
+#[derive(Debug, Serialize, Deserialize, ToSchema)]
+pub struct UpdateUserRequestWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<UpdateUserRequestWrapper> for UpdateUserRequest {
+    fn from(wrapper: UpdateUserRequestWrapper) -> Self {
+        serde_json::from_value(wrapper.inner).expect("Failed to deserialize UpdateUserRequest")
+    }
+}
 
 // ============================================================================
 // Response Wrapper Types (for Serialization and OpenAPI)
 // ============================================================================
 
-// Applications - responses are typically already in models, just re-export for
+// Applications
+/// Wrapper for UserApplicationResponse that implements
+#[cfg(feature = "axum")]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct UserApplicationResponseWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<UserApplicationResponse> for UserApplicationResponseWrapper {
+    fn from(response: UserApplicationResponse) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
+
+/// Wrapper for CompanyApplicationResponse that implements
+#[cfg(feature = "axum")]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct CompanyApplicationResponseWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<CompanyApplicationResponse> for CompanyApplicationResponseWrapper {
+    fn from(response: CompanyApplicationResponse) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // Balances
 /// Wrapper for BalanceResponse that implements
 #[cfg(feature = "axum")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct BalanceResponseWrapper(pub BalanceResponse);
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct BalanceResponseWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<BalanceResponse> for BalanceResponseWrapper {
+    fn from(response: BalanceResponse) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // Cards
 /// Wrapper for Card that implements
 #[cfg(feature = "axum")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct CardWrapper(pub Card);
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct CardWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<Card> for CardWrapper {
+    fn from(response: Card) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
+
+/// Wrapper for CardSecrets that implements
+#[cfg(feature = "axum")]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct CardSecretsWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<CardSecrets> for CardSecretsWrapper {
+    fn from(response: CardSecrets) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // Companies
 /// Wrapper for Company that implements
@@ -246,9 +444,21 @@ pub struct ContractWrapper(pub Contract);
 // Disputes
 /// Wrapper for Dispute that implements
 #[cfg(feature = "axum")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct DisputeWrapper(pub Dispute);
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct DisputeWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<Dispute> for DisputeWrapper {
+    fn from(response: Dispute) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // Keys
 /// Wrapper for Key that implements
@@ -279,9 +489,21 @@ pub struct WithdrawalSignatureResponseWrapper(pub WithdrawalSignatureResponse);
 // Shipping Groups
 /// Wrapper for ShippingGroup that implements
 #[cfg(feature = "axum")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct ShippingGroupWrapper(pub ShippingGroup);
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct ShippingGroupWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<ShippingGroup> for ShippingGroupWrapper {
+    fn from(response: ShippingGroup) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // Subtenants
 /// Wrapper for Subtenant that implements
@@ -299,16 +521,40 @@ pub struct ApplicationCompletionLinkWrapper(pub ApplicationCompletionLink);
 // Transactions
 /// Wrapper for Transaction that implements
 #[cfg(feature = "axum")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct TransactionWrapper(pub Transaction);
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct TransactionWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<Transaction> for TransactionWrapper {
+    fn from(response: Transaction) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // Users
 /// Wrapper for User that implements
 #[cfg(feature = "axum")]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct UserWrapper(pub User);
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct UserWrapper {
+    #[serde(flatten)]
+    #[schema(value_type = Object)]
+    pub inner: serde_json::Value,
+}
+
+#[cfg(feature = "axum")]
+impl From<User> for UserWrapper {
+    fn from(response: User) -> Self {
+        Self {
+            inner: serde_json::to_value(response).unwrap_or_default(),
+        }
+    }
+}
 
 // ============================================================================
 // Query Parameter Wrapper Types
