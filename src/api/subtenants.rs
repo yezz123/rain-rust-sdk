@@ -14,6 +14,12 @@ impl RainClient {
     ///
     /// Returns a [`Vec<Subtenant>`] containing the list of subtenants.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -32,7 +38,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn list_subtenants(&self) -> Result<Vec<Subtenant>> {
-        let path = "/issuing/subtenants";
+        let path = "/subtenants";
         self.get(path).await
     }
 
@@ -45,6 +51,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Subtenant`] containing the created subtenant information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -67,7 +80,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn create_subtenant(&self, request: &CreateSubtenantRequest) -> Result<Subtenant> {
-        let path = "/issuing/subtenants";
+        let path = "/subtenants";
         self.post(path, request).await
     }
 
@@ -80,9 +93,16 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Subtenant`] containing the subtenant information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Subtenant not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_subtenant(&self, subtenant_id: &Uuid) -> Result<Subtenant> {
-        let path = format!("/issuing/subtenants/{subtenant_id}");
+        let path = format!("/subtenants/{subtenant_id}");
         self.get(&path).await
     }
 
@@ -96,13 +116,21 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (204 No Content) with no response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Subtenant not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn update_subtenant(
         &self,
         subtenant_id: &Uuid,
         request: &UpdateSubtenantRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/subtenants/{subtenant_id}");
+        let path = format!("/subtenants/{subtenant_id}");
         let _: serde_json::Value = self.patch(&path, request).await?;
         Ok(())
     }
@@ -114,21 +142,21 @@ impl RainClient {
     /// Get all subtenants (blocking)
     #[cfg(feature = "sync")]
     pub fn list_subtenants_blocking(&self) -> Result<Vec<Subtenant>> {
-        let path = "/issuing/subtenants";
+        let path = "/subtenants";
         self.get_blocking(path)
     }
 
     /// Create a subtenant (blocking)
     #[cfg(feature = "sync")]
     pub fn create_subtenant_blocking(&self, request: &CreateSubtenantRequest) -> Result<Subtenant> {
-        let path = "/issuing/subtenants";
+        let path = "/subtenants";
         self.post_blocking(path, request)
     }
 
     /// Get a subtenant by its id (blocking)
     #[cfg(feature = "sync")]
     pub fn get_subtenant_blocking(&self, subtenant_id: &Uuid) -> Result<Subtenant> {
-        let path = format!("/issuing/subtenants/{subtenant_id}");
+        let path = format!("/subtenants/{subtenant_id}");
         self.get_blocking(&path)
     }
 
@@ -139,7 +167,7 @@ impl RainClient {
         subtenant_id: &Uuid,
         request: &UpdateSubtenantRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/subtenants/{subtenant_id}");
+        let path = format!("/subtenants/{subtenant_id}");
         let _: serde_json::Value = self.patch_blocking(&path, request)?;
         Ok(())
     }

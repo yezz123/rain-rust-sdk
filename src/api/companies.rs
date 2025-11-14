@@ -19,6 +19,12 @@ impl RainClient {
     ///
     /// Returns a [`Vec<Company>`] containing the list of companies.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -41,7 +47,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn list_companies(&self, params: &ListCompaniesParams) -> Result<Vec<Company>> {
-        let mut path = "/issuing/companies".to_string();
+        let mut path = "/companies".to_string();
         let mut query_parts = Vec::new();
 
         if let Some(ref cursor) = params.cursor {
@@ -69,6 +75,13 @@ impl RainClient {
     ///
     /// Returns a [`Company`] containing the company information.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Team not found
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -88,7 +101,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_company(&self, company_id: &Uuid) -> Result<Company> {
-        let path = format!("/issuing/companies/{company_id}");
+        let path = format!("/companies/{company_id}");
         self.get(&path).await
     }
 
@@ -102,6 +115,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Company`] containing the updated company information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Team not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -131,7 +152,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &UpdateCompanyRequest,
     ) -> Result<Company> {
-        let path = format!("/issuing/companies/{company_id}");
+        let path = format!("/companies/{company_id}");
         self.patch(&path, request).await
     }
 
@@ -145,6 +166,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Charge`] containing the created charge information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -174,7 +203,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &CreateChargeRequest,
     ) -> Result<Charge> {
-        let path = format!("/issuing/companies/{company_id}/charges");
+        let path = format!("/companies/{company_id}/charges");
         self.post(&path, request).await
     }
 
@@ -188,6 +217,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`crate::models::User`] containing the created user information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -225,7 +262,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &crate::models::users::CreateCompanyUserRequest,
     ) -> Result<crate::models::users::User> {
-        let path = format!("/issuing/companies/{company_id}/users");
+        let path = format!("/companies/{company_id}/users");
         self.post(&path, request).await
     }
 
@@ -236,7 +273,7 @@ impl RainClient {
     /// Get all companies (blocking)
     #[cfg(feature = "sync")]
     pub fn list_companies_blocking(&self, params: &ListCompaniesParams) -> Result<Vec<Company>> {
-        let mut path = "/issuing/companies".to_string();
+        let mut path = "/companies".to_string();
         let mut query_parts = Vec::new();
 
         if let Some(ref cursor) = params.cursor {
@@ -257,7 +294,7 @@ impl RainClient {
     /// Get a company by its ID (blocking)
     #[cfg(feature = "sync")]
     pub fn get_company_blocking(&self, company_id: &Uuid) -> Result<Company> {
-        let path = format!("/issuing/companies/{company_id}");
+        let path = format!("/companies/{company_id}");
         self.get_blocking(&path)
     }
 
@@ -268,7 +305,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &UpdateCompanyRequest,
     ) -> Result<Company> {
-        let path = format!("/issuing/companies/{company_id}");
+        let path = format!("/companies/{company_id}");
         self.patch_blocking(&path, request)
     }
 
@@ -279,7 +316,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &CreateChargeRequest,
     ) -> Result<Charge> {
-        let path = format!("/issuing/companies/{company_id}/charges");
+        let path = format!("/companies/{company_id}/charges");
         self.post_blocking(&path, request)
     }
 
@@ -290,7 +327,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &crate::models::users::CreateCompanyUserRequest,
     ) -> Result<crate::models::users::User> {
-        let path = format!("/issuing/companies/{company_id}/users");
+        let path = format!("/companies/{company_id}/users");
         self.post_blocking(&path, request)
     }
 }

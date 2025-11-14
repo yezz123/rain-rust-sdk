@@ -3,8 +3,9 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-/// Address structure
+/// Address structure (PhysicalAddress in OpenAPI)
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Address {
     pub line1: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -19,6 +20,7 @@ pub struct Address {
 
 /// Application link with parameters
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ApplicationLink {
     pub url: String,
     pub params: ApplicationLinkParams,
@@ -26,6 +28,7 @@ pub struct ApplicationLink {
 
 /// Application link parameters
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ApplicationLinkParams {
     pub user_id: Uuid,
 }
@@ -53,12 +56,16 @@ pub struct PersonInfo {
 
 /// Application status enum
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "camelCase")]
 pub enum ApplicationStatus {
-    Pending,
     Approved,
-    Rejected,
-    InReview,
+    Pending,
+    NeedsInformation,
+    NeedsVerification,
+    ManualReview,
+    Denied,
+    Locked,
+    Canceled,
 }
 
 /// Document type for company documents

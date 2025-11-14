@@ -17,27 +17,27 @@ pub enum DisputeStatus {
 
 /// Dispute information
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Dispute {
     pub id: Uuid,
-    #[serde(rename = "transactionId")]
     pub transaction_id: Uuid,
     pub status: DisputeStatus,
-    #[serde(rename = "textEvidence", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub text_evidence: Option<String>,
-    #[serde(rename = "createdAt")]
     pub created_at: DateTime<Utc>,
-    #[serde(rename = "resolvedAt", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub resolved_at: Option<DateTime<Utc>>,
 }
 
 /// Query parameters for listing disputes
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ListDisputesParams {
-    #[serde(rename = "companyId", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub company_id: Option<Uuid>,
-    #[serde(rename = "userId", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_id: Option<Uuid>,
-    #[serde(rename = "transactionId", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub transaction_id: Option<Uuid>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor: Option<String>,
@@ -47,17 +47,19 @@ pub struct ListDisputesParams {
 
 /// Request to update a dispute
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateDisputeRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<DisputeStatus>,
-    #[serde(rename = "textEvidence", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub text_evidence: Option<String>,
 }
 
 /// Request to create a dispute
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateDisputeRequest {
-    #[serde(rename = "textEvidence", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub text_evidence: Option<String>,
 }
 

@@ -17,9 +17,15 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Vec<Dispute>`] containing the list of disputes.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn list_disputes(&self, params: &ListDisputesParams) -> Result<Vec<Dispute>> {
-        let path = "/issuing/disputes";
+        let path = "/disputes";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -38,9 +44,16 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Dispute`] containing the dispute information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Dispute not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_dispute(&self, dispute_id: &Uuid) -> Result<Dispute> {
-        let path = format!("/issuing/disputes/{dispute_id}");
+        let path = format!("/disputes/{dispute_id}");
         self.get(&path).await
     }
 
@@ -54,13 +67,21 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (204 No Content) with no response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Dispute not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn update_dispute(
         &self,
         dispute_id: &Uuid,
         request: &UpdateDisputeRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/disputes/{dispute_id}");
+        let path = format!("/disputes/{dispute_id}");
         let _: serde_json::Value = self.patch(&path, request).await?;
         Ok(())
     }
@@ -76,7 +97,7 @@ impl RainClient {
     /// Returns the file evidence as raw bytes (application/octet-stream).
     #[cfg(feature = "async")]
     pub async fn get_dispute_evidence(&self, dispute_id: &Uuid) -> Result<Vec<u8>> {
-        let path = format!("/issuing/disputes/{dispute_id}/evidence");
+        let path = format!("/disputes/{dispute_id}/evidence");
         self.get_bytes(&path).await
     }
 
@@ -96,7 +117,7 @@ impl RainClient {
         dispute_id: &Uuid,
         request: &UploadDisputeEvidenceRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/disputes/{dispute_id}/evidence");
+        let path = format!("/disputes/{dispute_id}/evidence");
 
         use reqwest::multipart::{Form, Part};
         let form = Form::new()
@@ -120,13 +141,21 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Dispute`] containing the created dispute information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Transaction not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn create_transaction_dispute(
         &self,
         transaction_id: &Uuid,
         request: &CreateDisputeRequest,
     ) -> Result<Dispute> {
-        let path = format!("/issuing/transactions/{transaction_id}/disputes");
+        let path = format!("/transactions/{transaction_id}/disputes");
         self.post(&path, request).await
     }
 
@@ -137,7 +166,7 @@ impl RainClient {
     /// Get all disputes (blocking)
     #[cfg(feature = "sync")]
     pub fn list_disputes_blocking(&self, params: &ListDisputesParams) -> Result<Vec<Dispute>> {
-        let path = "/issuing/disputes";
+        let path = "/disputes";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -150,7 +179,7 @@ impl RainClient {
     /// Get a dispute by its id (blocking)
     #[cfg(feature = "sync")]
     pub fn get_dispute_blocking(&self, dispute_id: &Uuid) -> Result<Dispute> {
-        let path = format!("/issuing/disputes/{dispute_id}");
+        let path = format!("/disputes/{dispute_id}");
         self.get_blocking(&path)
     }
 
@@ -161,7 +190,7 @@ impl RainClient {
         dispute_id: &Uuid,
         request: &UpdateDisputeRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/disputes/{dispute_id}");
+        let path = format!("/disputes/{dispute_id}");
         let _: serde_json::Value = self.patch_blocking(&path, request)?;
         Ok(())
     }
@@ -169,7 +198,7 @@ impl RainClient {
     /// Get a dispute's file evidence (blocking)
     #[cfg(feature = "sync")]
     pub fn get_dispute_evidence_blocking(&self, dispute_id: &Uuid) -> Result<Vec<u8>> {
-        let path = format!("/issuing/disputes/{dispute_id}/evidence");
+        let path = format!("/disputes/{dispute_id}/evidence");
         self.get_bytes_blocking(&path)
     }
 
@@ -180,7 +209,7 @@ impl RainClient {
         dispute_id: &Uuid,
         request: &UploadDisputeEvidenceRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/disputes/{dispute_id}/evidence");
+        let path = format!("/disputes/{dispute_id}/evidence");
 
         use reqwest::blocking::multipart::{Form, Part};
         let form = Form::new()
@@ -203,7 +232,7 @@ impl RainClient {
         transaction_id: &Uuid,
         request: &CreateDisputeRequest,
     ) -> Result<Dispute> {
-        let path = format!("/issuing/transactions/{transaction_id}/disputes");
+        let path = format!("/transactions/{transaction_id}/disputes");
         self.post_blocking(&path, request)
     }
 }

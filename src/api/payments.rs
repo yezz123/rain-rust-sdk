@@ -19,6 +19,15 @@ impl RainClient {
     ///
     /// Returns an [`InitiatePaymentResponse`] containing the payment address.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `423` - User address is locked
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -49,7 +58,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &InitiatePaymentRequest,
     ) -> Result<InitiatePaymentResponse> {
-        let path = format!("/issuing/companies/{company_id}/payments");
+        let path = format!("/companies/{company_id}/payments");
         self.post(&path, request).await
     }
 
@@ -62,6 +71,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns an [`InitiatePaymentResponse`] containing the payment address.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `423` - User address is locked
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -89,7 +106,7 @@ impl RainClient {
         &self,
         request: &InitiatePaymentRequest,
     ) -> Result<InitiatePaymentResponse> {
-        let path = "/issuing/payments";
+        let path = "/payments";
         self.post(path, request).await
     }
 
@@ -103,6 +120,15 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns an [`InitiatePaymentResponse`] containing the payment address.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `423` - User address is locked
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -133,7 +159,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &InitiatePaymentRequest,
     ) -> Result<InitiatePaymentResponse> {
-        let path = format!("/issuing/users/{user_id}/payments");
+        let path = format!("/users/{user_id}/payments");
         self.post(&path, request).await
     }
 
@@ -148,7 +174,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &InitiatePaymentRequest,
     ) -> Result<InitiatePaymentResponse> {
-        let path = format!("/issuing/companies/{company_id}/payments");
+        let path = format!("/companies/{company_id}/payments");
         self.post_blocking(&path, request)
     }
 
@@ -158,7 +184,7 @@ impl RainClient {
         &self,
         request: &InitiatePaymentRequest,
     ) -> Result<InitiatePaymentResponse> {
-        let path = "/issuing/payments";
+        let path = "/payments";
         self.post_blocking(path, request)
     }
 
@@ -169,7 +195,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &InitiatePaymentRequest,
     ) -> Result<InitiatePaymentResponse> {
-        let path = format!("/issuing/users/{user_id}/payments");
+        let path = format!("/users/{user_id}/payments");
         self.post_blocking(&path, request)
     }
 }

@@ -19,6 +19,12 @@ impl RainClient {
     ///
     /// Returns a [`Vec<User>`] containing the list of users.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -43,7 +49,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn list_users(&self, params: &ListUsersParams) -> Result<Vec<User>> {
-        let mut path = "/issuing/users".to_string();
+        let mut path = "/users".to_string();
         let mut query_parts = Vec::new();
 
         if let Some(ref company_id) = params.company_id {
@@ -74,6 +80,13 @@ impl RainClient {
     ///
     /// Returns a [`User`] containing the created user information.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -102,7 +115,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn create_user(&self, request: &CreateUserRequest) -> Result<User> {
-        let path = "/issuing/users";
+        let path = "/users";
         self.post(path, request).await
     }
 
@@ -115,6 +128,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`User`] containing the user information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -135,7 +155,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_user(&self, user_id: &Uuid) -> Result<User> {
-        let path = format!("/issuing/users/{user_id}");
+        let path = format!("/users/{user_id}");
         self.get(&path).await
     }
 
@@ -148,6 +168,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (204 No Content).
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -168,7 +195,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn delete_user(&self, user_id: &Uuid) -> Result<()> {
-        let path = format!("/issuing/users/{user_id}");
+        let path = format!("/users/{user_id}");
         self.delete(&path).await
     }
 
@@ -182,6 +209,15 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`User`] containing the updated user information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `423` - User address is locked
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -217,7 +253,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn update_user(&self, user_id: &Uuid, request: &UpdateUserRequest) -> Result<User> {
-        let path = format!("/issuing/users/{user_id}");
+        let path = format!("/users/{user_id}");
         self.patch(&path, request).await
     }
 
@@ -231,6 +267,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Charge`] containing the created charge information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -260,7 +304,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &CreateChargeRequest,
     ) -> Result<Charge> {
-        let path = format!("/issuing/users/{user_id}/charges");
+        let path = format!("/users/{user_id}/charges");
         self.post(&path, request).await
     }
 
@@ -271,7 +315,7 @@ impl RainClient {
     /// Get all users (blocking)
     #[cfg(feature = "sync")]
     pub fn list_users_blocking(&self, params: &ListUsersParams) -> Result<Vec<User>> {
-        let mut path = "/issuing/users".to_string();
+        let mut path = "/users".to_string();
         let mut query_parts = Vec::new();
 
         if let Some(ref company_id) = params.company_id {
@@ -295,21 +339,21 @@ impl RainClient {
     /// Create an authorized user (blocking)
     #[cfg(feature = "sync")]
     pub fn create_user_blocking(&self, request: &CreateUserRequest) -> Result<User> {
-        let path = "/issuing/users";
+        let path = "/users";
         self.post_blocking(path, request)
     }
 
     /// Get a user by its ID (blocking)
     #[cfg(feature = "sync")]
     pub fn get_user_blocking(&self, user_id: &Uuid) -> Result<User> {
-        let path = format!("/issuing/users/{user_id}");
+        let path = format!("/users/{user_id}");
         self.get_blocking(&path)
     }
 
     /// Delete a user (blocking)
     #[cfg(feature = "sync")]
     pub fn delete_user_blocking(&self, user_id: &Uuid) -> Result<()> {
-        let path = format!("/issuing/users/{user_id}");
+        let path = format!("/users/{user_id}");
         self.delete_blocking(&path)
     }
 
@@ -320,7 +364,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &UpdateUserRequest,
     ) -> Result<User> {
-        let path = format!("/issuing/users/{user_id}");
+        let path = format!("/users/{user_id}");
         self.patch_blocking(&path, request)
     }
 
@@ -331,7 +375,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &CreateChargeRequest,
     ) -> Result<Charge> {
-        let path = format!("/issuing/users/{user_id}/charges");
+        let path = format!("/users/{user_id}/charges");
         self.post_blocking(&path, request)
     }
 }

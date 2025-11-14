@@ -19,6 +19,15 @@ impl RainClient {
     ///
     /// Returns a [`PaymentSignatureResponse`] which can be either pending or ready.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `409` - Another active signature already exists
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -51,7 +60,7 @@ impl RainClient {
         company_id: &Uuid,
         params: &PaymentSignatureParams,
     ) -> Result<PaymentSignatureResponse> {
-        let path = format!("/issuing/companies/{company_id}/signatures/payments");
+        let path = format!("/companies/{company_id}/signatures/payments");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -71,6 +80,15 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`WithdrawalSignatureResponse`] which can be either pending or ready.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `409` - Another active signature already exists
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -105,7 +123,7 @@ impl RainClient {
         company_id: &Uuid,
         params: &WithdrawalSignatureParams,
     ) -> Result<WithdrawalSignatureResponse> {
-        let path = format!("/issuing/companies/{company_id}/signatures/withdrawals");
+        let path = format!("/companies/{company_id}/signatures/withdrawals");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -124,12 +142,20 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`PaymentSignatureResponse`] which can be either pending or ready.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `409` - Another active signature already exists
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_payment_signature(
         &self,
         params: &PaymentSignatureParams,
     ) -> Result<PaymentSignatureResponse> {
-        let path = "/issuing/signatures/payments";
+        let path = "/signatures/payments";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -148,12 +174,20 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`WithdrawalSignatureResponse`] which can be either pending or ready.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `409` - Another active signature already exists
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_withdrawal_signature(
         &self,
         params: &WithdrawalSignatureParams,
     ) -> Result<WithdrawalSignatureResponse> {
-        let path = "/issuing/signatures/withdrawals";
+        let path = "/signatures/withdrawals";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -173,13 +207,22 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`PaymentSignatureResponse`] which can be either pending or ready.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `409` - Another active signature already exists
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_user_payment_signature(
         &self,
         user_id: &Uuid,
         params: &PaymentSignatureParams,
     ) -> Result<PaymentSignatureResponse> {
-        let path = format!("/issuing/users/{user_id}/signatures/payments");
+        let path = format!("/users/{user_id}/signatures/payments");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -199,13 +242,22 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`WithdrawalSignatureResponse`] which can be either pending or ready.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `409` - Another active signature already exists
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_user_withdrawal_signature(
         &self,
         user_id: &Uuid,
         params: &WithdrawalSignatureParams,
     ) -> Result<WithdrawalSignatureResponse> {
-        let path = format!("/issuing/users/{user_id}/signatures/withdrawals");
+        let path = format!("/users/{user_id}/signatures/withdrawals");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -226,7 +278,7 @@ impl RainClient {
         company_id: &Uuid,
         params: &PaymentSignatureParams,
     ) -> Result<PaymentSignatureResponse> {
-        let path = format!("/issuing/companies/{company_id}/signatures/payments");
+        let path = format!("/companies/{company_id}/signatures/payments");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -243,7 +295,7 @@ impl RainClient {
         company_id: &Uuid,
         params: &WithdrawalSignatureParams,
     ) -> Result<WithdrawalSignatureResponse> {
-        let path = format!("/issuing/companies/{company_id}/signatures/withdrawals");
+        let path = format!("/companies/{company_id}/signatures/withdrawals");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -259,7 +311,7 @@ impl RainClient {
         &self,
         params: &PaymentSignatureParams,
     ) -> Result<PaymentSignatureResponse> {
-        let path = "/issuing/signatures/payments";
+        let path = "/signatures/payments";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -275,7 +327,7 @@ impl RainClient {
         &self,
         params: &WithdrawalSignatureParams,
     ) -> Result<WithdrawalSignatureResponse> {
-        let path = "/issuing/signatures/withdrawals";
+        let path = "/signatures/withdrawals";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -292,7 +344,7 @@ impl RainClient {
         user_id: &Uuid,
         params: &PaymentSignatureParams,
     ) -> Result<PaymentSignatureResponse> {
-        let path = format!("/issuing/users/{user_id}/signatures/payments");
+        let path = format!("/users/{user_id}/signatures/payments");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path
@@ -309,7 +361,7 @@ impl RainClient {
         user_id: &Uuid,
         params: &WithdrawalSignatureParams,
     ) -> Result<WithdrawalSignatureResponse> {
-        let path = format!("/issuing/users/{user_id}/signatures/withdrawals");
+        let path = format!("/users/{user_id}/signatures/withdrawals");
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path

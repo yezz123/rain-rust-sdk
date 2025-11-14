@@ -18,6 +18,12 @@ impl RainClient {
     ///
     /// Returns a [`Vec<Card>`] containing the list of cards.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -45,7 +51,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn list_cards(&self, params: &ListCardsParams) -> Result<ListCardsResponse> {
-        let mut path = "/issuing/cards".to_string();
+        let mut path = "/cards".to_string();
         let mut query_parts = Vec::new();
 
         if let Some(ref company_id) = params.company_id {
@@ -83,6 +89,13 @@ impl RainClient {
     ///
     /// Returns a [`Card`] containing the card information.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Card not found
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -102,7 +115,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_card(&self, card_id: &Uuid) -> Result<Card> {
-        let path = format!("/issuing/cards/{card_id}");
+        let path = format!("/cards/{card_id}");
         self.get(&path).await
     }
 
@@ -116,6 +129,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Card`] containing the updated card information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Card not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -143,7 +164,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn update_card(&self, card_id: &Uuid, request: &UpdateCardRequest) -> Result<Card> {
-        let path = format!("/issuing/cards/{card_id}");
+        let path = format!("/cards/{card_id}");
         self.patch(&path, request).await
     }
 
@@ -178,7 +199,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_card_secrets(&self, card_id: &Uuid, session_id: &str) -> Result<CardSecrets> {
-        let path = format!("/issuing/cards/{card_id}/secrets");
+        let path = format!("/cards/{card_id}/secrets");
         self.get_with_headers(&path, vec![("SessionId", session_id)])
             .await
     }
@@ -212,7 +233,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_card_processor_details(&self, card_id: &Uuid) -> Result<ProcessorDetails> {
-        let path = format!("/issuing/cards/{card_id}/processorDetails");
+        let path = format!("/cards/{card_id}/processorDetails");
         self.get(&path).await
     }
 
@@ -247,7 +268,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_card_pin(&self, card_id: &Uuid, session_id: &str) -> Result<CardPin> {
-        let path = format!("/issuing/cards/{card_id}/pin");
+        let path = format!("/cards/{card_id}/pin");
         self.get_with_headers(&path, vec![("SessionId", session_id)])
             .await
     }
@@ -296,7 +317,7 @@ impl RainClient {
         request: &UpdateCardPinRequest,
         session_id: &str,
     ) -> Result<()> {
-        let path = format!("/issuing/cards/{card_id}/pin");
+        let path = format!("/cards/{card_id}/pin");
         // Use a dummy deserializable type for empty response
         let _: serde_json::Value = self
             .put_with_headers(&path, request, vec![("SessionId", session_id)])
@@ -348,7 +369,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &CreateCardRequest,
     ) -> Result<Card> {
-        let path = format!("/issuing/users/{user_id}/cards");
+        let path = format!("/users/{user_id}/cards");
         self.post(&path, request).await
     }
 
@@ -359,7 +380,7 @@ impl RainClient {
     /// Get all cards for a user or company (blocking)
     #[cfg(feature = "sync")]
     pub fn list_cards_blocking(&self, params: &ListCardsParams) -> Result<Vec<Card>> {
-        let mut path = "/issuing/cards".to_string();
+        let mut path = "/cards".to_string();
         let mut query_parts = Vec::new();
 
         if let Some(ref company_id) = params.company_id {
@@ -390,7 +411,7 @@ impl RainClient {
     /// Get a card by its ID (blocking)
     #[cfg(feature = "sync")]
     pub fn get_card_blocking(&self, card_id: &Uuid) -> Result<Card> {
-        let path = format!("/issuing/cards/{card_id}");
+        let path = format!("/cards/{card_id}");
         self.get_blocking(&path)
     }
 
@@ -401,7 +422,7 @@ impl RainClient {
         card_id: &Uuid,
         request: &UpdateCardRequest,
     ) -> Result<Card> {
-        let path = format!("/issuing/cards/{card_id}");
+        let path = format!("/cards/{card_id}");
         self.patch_blocking(&path, request)
     }
 
@@ -412,7 +433,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &CreateCardRequest,
     ) -> Result<Card> {
-        let path = format!("/issuing/users/{user_id}/cards");
+        let path = format!("/users/{user_id}/cards");
         self.post_blocking(&path, request)
     }
 }

@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 /// Balance information response
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BalanceResponse {
     pub credit_limit: i64,
     pub pending_charges: i64,

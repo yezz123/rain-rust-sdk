@@ -20,6 +20,14 @@ impl RainClient {
     ///
     /// Returns the report as raw bytes (content type depends on format: csv, json, or ssrp).
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Report not found
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -60,9 +68,9 @@ impl RainClient {
 
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
-            format!("/issuing/reports/{year}/{month}/{day}")
+            format!("/reports/{year}/{month}/{day}")
         } else {
-            format!("/issuing/reports/{year}/{month}/{day}?{query_string}")
+            format!("/reports/{year}/{month}/{day}?{query_string}")
         };
         self.get_bytes(&full_path).await
     }
@@ -82,9 +90,9 @@ impl RainClient {
     ) -> Result<Vec<u8>> {
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
-            format!("/issuing/reports/{year}/{month}/{day}")
+            format!("/reports/{year}/{month}/{day}")
         } else {
-            format!("/issuing/reports/{year}/{month}/{day}?{query_string}")
+            format!("/reports/{year}/{month}/{day}?{query_string}")
         };
         self.get_bytes_blocking(&full_path)
     }

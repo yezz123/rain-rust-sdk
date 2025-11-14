@@ -14,6 +14,12 @@ impl RainClient {
     ///
     /// Returns a [`BalanceResponse`] containing the tenant's balance information.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -33,7 +39,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_balances(&self) -> Result<BalanceResponse> {
-        let path = "/issuing/balances";
+        let path = "/balances";
         self.get(path).await
     }
 
@@ -46,6 +52,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`BalanceResponse`] containing the company's balance information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -67,7 +80,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_company_balances(&self, company_id: &Uuid) -> Result<BalanceResponse> {
-        let path = format!("/issuing/companies/{company_id}/balances");
+        let path = format!("/companies/{company_id}/balances");
         self.get(&path).await
     }
 
@@ -80,6 +93,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`BalanceResponse`] containing the user's balance information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -101,7 +121,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_user_balances(&self, user_id: &Uuid) -> Result<BalanceResponse> {
-        let path = format!("/issuing/users/{user_id}/balances");
+        let path = format!("/users/{user_id}/balances");
         self.get(&path).await
     }
 
@@ -112,21 +132,21 @@ impl RainClient {
     /// Get a tenant's credit balances (blocking)
     #[cfg(feature = "sync")]
     pub fn get_balances_blocking(&self) -> Result<BalanceResponse> {
-        let path = "/issuing/balances";
+        let path = "/balances";
         self.get_blocking(path)
     }
 
     /// Get a company's credit balances (blocking)
     #[cfg(feature = "sync")]
     pub fn get_company_balances_blocking(&self, company_id: &Uuid) -> Result<BalanceResponse> {
-        let path = format!("/issuing/companies/{company_id}/balances");
+        let path = format!("/companies/{company_id}/balances");
         self.get_blocking(&path)
     }
 
     /// Get a user's credit balances (blocking)
     #[cfg(feature = "sync")]
     pub fn get_user_balances_blocking(&self, user_id: &Uuid) -> Result<BalanceResponse> {
-        let path = format!("/issuing/users/{user_id}/balances");
+        let path = format!("/users/{user_id}/balances");
         self.get_blocking(&path)
     }
 }

@@ -42,6 +42,7 @@ pub struct CardLimit {
 
 /// Card configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CardConfiguration {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub display_name: Option<String>,
@@ -66,6 +67,7 @@ pub enum ShippingMethod {
 
 /// Shipping address for physical cards
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ShippingAddress {
     pub line1: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -86,6 +88,7 @@ pub struct ShippingAddress {
 
 /// Billing address
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct BillingAddress {
     pub line1: String,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -100,6 +103,7 @@ pub struct BillingAddress {
 
 /// Request to create a card for a user
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateCardRequest {
     pub r#type: CardType,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -118,6 +122,7 @@ pub struct CreateCardRequest {
 
 /// Request to update a card
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateCardRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<CardStatus>,
@@ -138,34 +143,32 @@ pub struct EncryptedData {
 
 /// Request to update a card's PIN
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateCardPinRequest {
     pub encrypted_pin: EncryptedData,
 }
 
 /// Response for card
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Card {
     pub id: Uuid,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub company_id: Option<Uuid>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub user_id: Option<Uuid>,
+    pub company_id: Uuid,
+    pub user_id: Uuid,
     pub r#type: CardType,
     pub status: CardStatus,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<CardLimit>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub last4: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub expiration_month: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub expiration_year: Option<String>,
+    pub last4: String,
+    pub expiration_month: String,
+    pub expiration_year: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub token_wallets: Option<Vec<String>>,
 }
 
 /// Response for card secrets (encrypted PAN and CVC)
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CardSecrets {
     pub encrypted_pan: EncryptedData,
     pub encrypted_cvc: EncryptedData,
@@ -173,24 +176,33 @@ pub struct CardSecrets {
 
 /// Response for card PIN
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CardPin {
     pub encrypted_pin: EncryptedData,
 }
 
 /// Response for processor details
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ProcessorDetails {
     pub processor_card_id: String,
-    pub time_based_secret: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub time_based_secret: Option<String>,
 }
 
 /// Query parameters for listing cards
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ListCardsParams {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub company_id: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_id: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<CardStatus>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 

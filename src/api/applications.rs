@@ -28,6 +28,13 @@ impl RainClient {
     ///
     /// Returns a [`CompanyApplicationResponse`] containing the application information.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -53,7 +60,7 @@ impl RainClient {
         &self,
         request: &CreateCompanyApplicationRequest,
     ) -> Result<CompanyApplicationResponse> {
-        let path = "/issuing/applications/company";
+        let path = "/applications/company";
         self.post(path, request).await
     }
 
@@ -66,6 +73,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`CompanyApplicationResponse`] containing the application information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -89,7 +103,7 @@ impl RainClient {
         &self,
         company_id: &Uuid,
     ) -> Result<CompanyApplicationResponse> {
-        let path = format!("/issuing/applications/company/{company_id}");
+        let path = format!("/applications/company/{company_id}");
         self.get(&path).await
     }
 
@@ -103,6 +117,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`CompanyApplicationResponse`] containing the updated application information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -133,7 +155,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &UpdateCompanyApplicationRequest,
     ) -> Result<CompanyApplicationResponse> {
-        let path = format!("/issuing/applications/company/{company_id}");
+        let path = format!("/applications/company/{company_id}");
         self.patch(&path, request).await
     }
 
@@ -148,6 +170,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`CompanyApplicationResponse`] containing the updated application information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company or UBO not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -184,7 +214,7 @@ impl RainClient {
         ubo_id: &Uuid,
         request: &UpdateUltimateBeneficialOwnerRequest,
     ) -> Result<CompanyApplicationResponse> {
-        let path = format!("/issuing/applications/company/{company_id}/ubo/{ubo_id}");
+        let path = format!("/applications/company/{company_id}/ubo/{ubo_id}");
         self.patch(&path, request).await
     }
 
@@ -231,7 +261,7 @@ impl RainClient {
         company_id: &Uuid,
         params: &DocumentUploadParams,
     ) -> Result<serde_json::Value> {
-        let path = format!("/issuing/applications/company/{company_id}/document");
+        let path = format!("/applications/company/{company_id}/document");
         let form = self.build_company_document_form(params)?;
         self.put_multipart(&path, form).await
     }
@@ -282,7 +312,7 @@ impl RainClient {
         ubo_id: &Uuid,
         params: &DocumentUploadParams,
     ) -> Result<serde_json::Value> {
-        let path = format!("/issuing/applications/company/{company_id}/ubo/{ubo_id}/document");
+        let path = format!("/applications/company/{company_id}/ubo/{ubo_id}/document");
         let form = self.build_user_document_form(params)?;
         self.put_multipart(&path, form).await
     }
@@ -293,6 +323,13 @@ impl RainClient {
 
     /// Create a user application
     ///
+    /// This method supports three verification methods (oneOf in OpenAPI spec):
+    /// 1. **Using Sumsub Share Token**: Provide only `sumsub_share_token`
+    /// 2. **Using Persona Share Token**: Provide only `persona_share_token`
+    /// 3. **Using API**: Provide full person data (all `IssuingApplicationPerson` fields)
+    ///
+    /// Exactly one verification method must be provided. The API will validate this at runtime.
+    ///
     /// # Arguments
     ///
     /// * `request` - The user application request
@@ -301,7 +338,16 @@ impl RainClient {
     ///
     /// Returns a [`UserApplicationResponse`] containing the application information.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
+    ///
+    /// ## Using Sumsub Share Token
     ///
     /// ```no_run
     /// use rain_sdk::{RainClient, Config, Environment, AuthConfig};
@@ -314,13 +360,135 @@ impl RainClient {
     /// let client = RainClient::new(config, auth)?;
     ///
     /// let request = CreateUserApplicationRequest {
+    ///     // Verification method: Sumsub Share Token
+    ///     sumsub_share_token: Some("your-sumsub-token".to_string()),
+    ///     persona_share_token: None,
+    ///     // Person data fields should be None when using tokens
+    ///     id: None,
+    ///     first_name: None,
+    ///     last_name: None,
+    ///     birth_date: None,
+    ///     national_id: None,
+    ///     country_of_issue: None,
+    ///     email: None,
+    ///     phone_country_code: None,
+    ///     phone_number: None,
+    ///     address: None,
+    ///     // Required fields
     ///     ip_address: "127.0.0.1".to_string(),
     ///     occupation: "Engineer".to_string(),
     ///     annual_salary: "100000".to_string(),
     ///     account_purpose: "Business".to_string(),
     ///     expected_monthly_volume: "5000".to_string(),
     ///     is_terms_of_service_accepted: true,
-    ///     sumsub_share_token: "token".to_string(),
+    ///     // Optional fields
+    ///     wallet_address: None,
+    ///     solana_address: None,
+    ///     tron_address: None,
+    ///     stellar_address: None,
+    ///     chain_id: None,
+    ///     contract_address: None,
+    ///     source_key: None,
+    ///     has_existing_documents: None,
+    /// };
+    /// let application = client.create_user_application(&request).await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// ## Using Persona Share Token
+    ///
+    /// ```no_run
+    /// use rain_sdk::{RainClient, Config, Environment, AuthConfig};
+    /// use rain_sdk::models::applications::CreateUserApplicationRequest;
+    ///
+    /// # #[cfg(feature = "async")]
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let config = Config::new(Environment::Dev);
+    /// let auth = AuthConfig::with_api_key("your-api-key".to_string());
+    /// let client = RainClient::new(config, auth)?;
+    ///
+    /// let request = CreateUserApplicationRequest {
+    ///     // Verification method: Persona Share Token
+    ///     sumsub_share_token: None,
+    ///     persona_share_token: Some("your-persona-token".to_string()),
+    ///     // Person data fields should be None when using tokens
+    ///     id: None,
+    ///     first_name: None,
+    ///     last_name: None,
+    ///     birth_date: None,
+    ///     national_id: None,
+    ///     country_of_issue: None,
+    ///     email: None,
+    ///     phone_country_code: None,
+    ///     phone_number: None,
+    ///     address: None,
+    ///     // Required fields
+    ///     ip_address: "127.0.0.1".to_string(),
+    ///     occupation: "Engineer".to_string(),
+    ///     annual_salary: "100000".to_string(),
+    ///     account_purpose: "Business".to_string(),
+    ///     expected_monthly_volume: "5000".to_string(),
+    ///     is_terms_of_service_accepted: true,
+    ///     // Optional fields
+    ///     wallet_address: None,
+    ///     solana_address: None,
+    ///     tron_address: None,
+    ///     stellar_address: None,
+    ///     chain_id: None,
+    ///     contract_address: None,
+    ///     source_key: None,
+    ///     has_existing_documents: None,
+    /// };
+    /// let application = client.create_user_application(&request).await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// ## Using Full API (IssuingApplicationPerson)
+    ///
+    /// ```no_run
+    /// use rain_sdk::{RainClient, Config, Environment, AuthConfig};
+    /// use rain_sdk::models::applications::CreateUserApplicationRequest;
+    /// use rain_sdk::models::common::Address;
+    ///
+    /// # #[cfg(feature = "async")]
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// let config = Config::new(Environment::Dev);
+    /// let auth = AuthConfig::with_api_key("your-api-key".to_string());
+    /// let client = RainClient::new(config, auth)?;
+    ///
+    /// let request = CreateUserApplicationRequest {
+    ///     // Verification method: Full API - no tokens
+    ///     sumsub_share_token: None,
+    ///     persona_share_token: None,
+    ///     // Person data fields (required for API method)
+    ///     id: None, // Optional: only if application was previously initiated
+    ///     first_name: Some("John".to_string()),
+    ///     last_name: Some("Doe".to_string()),
+    ///     birth_date: Some("2000-01-01".to_string()),
+    ///     national_id: Some("123456789".to_string()),
+    ///     country_of_issue: Some("US".to_string()),
+    ///     email: Some("john@example.com".to_string()),
+    ///     phone_country_code: Some("1".to_string()),
+    ///     phone_number: Some("5555555555".to_string()),
+    ///     address: Some(Address {
+    ///         line1: "123 Main St".to_string(),
+    ///         line2: None,
+    ///         city: "New York".to_string(),
+    ///         region: "NY".to_string(),
+    ///         postal_code: "10001".to_string(),
+    ///         country_code: "US".to_string(),
+    ///         country: None,
+    ///     }),
+    ///     // Required fields
+    ///     ip_address: "127.0.0.1".to_string(),
+    ///     occupation: "Engineer".to_string(),
+    ///     annual_salary: "100000".to_string(),
+    ///     account_purpose: "Business".to_string(),
+    ///     expected_monthly_volume: "5000".to_string(),
+    ///     is_terms_of_service_accepted: true,
+    ///     // Optional fields
     ///     wallet_address: None,
     ///     solana_address: None,
     ///     tron_address: None,
@@ -339,7 +507,7 @@ impl RainClient {
         &self,
         request: &CreateUserApplicationRequest,
     ) -> Result<UserApplicationResponse> {
-        let path = "/issuing/applications/user";
+        let path = "/applications/user";
         self.post(path, request).await
     }
 
@@ -352,6 +520,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`UserApplicationResponse`] containing the application information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -380,7 +555,7 @@ impl RainClient {
         &self,
         request: &InitiateUserApplicationRequest,
     ) -> Result<UserApplicationResponse> {
-        let path = "/issuing/applications/user/initiate";
+        let path = "/applications/user/initiate";
         self.post(path, request).await
     }
 
@@ -393,6 +568,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`UserApplicationResponse`] containing the application information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -413,7 +595,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_user_application(&self, user_id: &Uuid) -> Result<UserApplicationResponse> {
-        let path = format!("/issuing/applications/user/{user_id}");
+        let path = format!("/applications/user/{user_id}");
         self.get(&path).await
     }
 
@@ -427,6 +609,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`UserApplicationResponse`] containing the updated application information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -467,7 +657,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &UpdateUserApplicationRequest,
     ) -> Result<UserApplicationResponse> {
-        let path = format!("/issuing/applications/user/{user_id}");
+        let path = format!("/applications/user/{user_id}");
         self.patch(&path, request).await
     }
 
@@ -514,7 +704,7 @@ impl RainClient {
         user_id: &Uuid,
         params: &DocumentUploadParams,
     ) -> Result<serde_json::Value> {
-        let path = format!("/issuing/applications/user/{user_id}/document");
+        let path = format!("/applications/user/{user_id}/document");
         let form = self.build_user_document_form(params)?;
         self.put_multipart(&path, form).await
     }
@@ -623,7 +813,7 @@ impl RainClient {
         &self,
         request: &CreateCompanyApplicationRequest,
     ) -> Result<CompanyApplicationResponse> {
-        let path = "/issuing/applications/company";
+        let path = "/applications/company";
         self.post_blocking(path, request)
     }
 
@@ -633,7 +823,7 @@ impl RainClient {
         &self,
         company_id: &Uuid,
     ) -> Result<CompanyApplicationResponse> {
-        let path = format!("/issuing/applications/company/{company_id}");
+        let path = format!("/applications/company/{company_id}");
         self.get_blocking(&path)
     }
 
@@ -644,7 +834,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &UpdateCompanyApplicationRequest,
     ) -> Result<CompanyApplicationResponse> {
-        let path = format!("/issuing/applications/company/{company_id}");
+        let path = format!("/applications/company/{company_id}");
         self.patch_blocking(&path, request)
     }
 
@@ -656,7 +846,7 @@ impl RainClient {
         ubo_id: &Uuid,
         request: &UpdateUltimateBeneficialOwnerRequest,
     ) -> Result<CompanyApplicationResponse> {
-        let path = format!("/issuing/applications/company/{company_id}/ubo/{ubo_id}");
+        let path = format!("/applications/company/{company_id}/ubo/{ubo_id}");
         self.patch_blocking(&path, request)
     }
 
@@ -666,7 +856,7 @@ impl RainClient {
         &self,
         request: &CreateUserApplicationRequest,
     ) -> Result<UserApplicationResponse> {
-        let path = "/issuing/applications/user";
+        let path = "/applications/user";
         self.post_blocking(path, request)
     }
 
@@ -676,14 +866,14 @@ impl RainClient {
         &self,
         request: &InitiateUserApplicationRequest,
     ) -> Result<UserApplicationResponse> {
-        let path = "/issuing/applications/user/initiate";
+        let path = "/applications/user/initiate";
         self.post_blocking(path, request)
     }
 
     /// Get a user application by ID (blocking)
     #[cfg(feature = "sync")]
     pub fn get_user_application_blocking(&self, user_id: &Uuid) -> Result<UserApplicationResponse> {
-        let path = format!("/issuing/applications/user/{user_id}");
+        let path = format!("/applications/user/{user_id}");
         self.get_blocking(&path)
     }
 
@@ -694,7 +884,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &UpdateUserApplicationRequest,
     ) -> Result<UserApplicationResponse> {
-        let path = format!("/issuing/applications/user/{user_id}");
+        let path = format!("/applications/user/{user_id}");
         self.patch_blocking(&path, request)
     }
 }

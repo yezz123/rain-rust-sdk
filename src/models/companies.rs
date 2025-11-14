@@ -7,6 +7,7 @@ use uuid::Uuid;
 
 /// Company information
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Company {
     pub id: Uuid,
     pub name: String,
@@ -25,6 +26,7 @@ pub struct Company {
 
 /// Request to update a company
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateCompanyRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -34,8 +36,11 @@ pub struct UpdateCompanyRequest {
 
 /// Query parameters for listing companies
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ListCompaniesParams {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 

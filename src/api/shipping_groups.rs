@@ -18,6 +18,12 @@ impl RainClient {
     ///
     /// Returns a [`Vec<ShippingGroup>`] containing the list of shipping groups.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -43,7 +49,7 @@ impl RainClient {
         &self,
         params: &ListShippingGroupsParams,
     ) -> Result<Vec<ShippingGroup>> {
-        let path = "/issuing/shipping-groups";
+        let path = "/shipping-groups";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -62,6 +68,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`ShippingGroup`] containing the created shipping group information (202 Accepted).
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -100,7 +113,7 @@ impl RainClient {
         &self,
         request: &CreateShippingGroupRequest,
     ) -> Result<ShippingGroup> {
-        let path = "/issuing/shipping-groups";
+        let path = "/shipping-groups";
         // Returns 202 Accepted
         self.post(path, request).await
     }
@@ -114,9 +127,16 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`ShippingGroup`] containing the shipping group information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Shipping group not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_shipping_group(&self, shipping_group_id: &Uuid) -> Result<ShippingGroup> {
-        let path = format!("/issuing/shipping-groups/{shipping_group_id}");
+        let path = format!("/shipping-groups/{shipping_group_id}");
         self.get(&path).await
     }
 
@@ -130,7 +150,7 @@ impl RainClient {
         &self,
         params: &ListShippingGroupsParams,
     ) -> Result<Vec<ShippingGroup>> {
-        let path = "/issuing/shipping-groups";
+        let path = "/shipping-groups";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -146,7 +166,7 @@ impl RainClient {
         &self,
         request: &CreateShippingGroupRequest,
     ) -> Result<ShippingGroup> {
-        let path = "/issuing/shipping-groups";
+        let path = "/shipping-groups";
         // Returns 202 Accepted
         self.post_blocking(path, request)
     }
@@ -154,7 +174,7 @@ impl RainClient {
     /// Get a bulk shipping group by its id (blocking)
     #[cfg(feature = "sync")]
     pub fn get_shipping_group_blocking(&self, shipping_group_id: &Uuid) -> Result<ShippingGroup> {
-        let path = format!("/issuing/shipping-groups/{shipping_group_id}");
+        let path = format!("/shipping-groups/{shipping_group_id}");
         self.get_blocking(&path)
     }
 }

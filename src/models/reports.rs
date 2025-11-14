@@ -13,6 +13,7 @@ pub enum ReportFormat {
 
 /// Query parameters for getting a report
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GetReportParams {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub format: Option<ReportFormat>,

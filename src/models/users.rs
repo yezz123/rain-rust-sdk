@@ -6,6 +6,7 @@ use uuid::Uuid;
 
 /// User information
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct User {
     pub id: Uuid,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -41,6 +42,7 @@ pub struct User {
 
 /// Request to create a user in a company
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateCompanyUserRequest {
     pub first_name: String,
     pub last_name: String,
@@ -62,6 +64,7 @@ pub struct CreateCompanyUserRequest {
 
 /// Request to create an authorized user
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateUserRequest {
     pub first_name: String,
     pub last_name: String,
@@ -80,6 +83,7 @@ pub struct CreateUserRequest {
 
 /// Request to update a user
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UpdateUserRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub first_name: Option<String>,
@@ -109,9 +113,13 @@ pub struct UpdateUserRequest {
 
 /// Query parameters for listing users
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ListUsersParams {
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub company_id: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cursor: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub limit: Option<u32>,
 }
 

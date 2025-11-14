@@ -18,6 +18,13 @@ impl RainClient {
     ///
     /// Returns a [`Vec<Contract>`] containing the list of contracts.
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -37,7 +44,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_company_contracts(&self, company_id: &Uuid) -> Result<Vec<Contract>> {
-        let path = format!("/issuing/companies/{company_id}/contracts");
+        let path = format!("/companies/{company_id}/contracts");
         self.get(&path).await
     }
 
@@ -51,6 +58,15 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (202 Accepted) with no response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Company not found
+    /// - `409` - Company already has a contract on this chain
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -80,7 +96,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &CreateCompanyContractRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/companies/{company_id}/contracts");
+        let path = format!("/companies/{company_id}/contracts");
         // Returns 202 Accepted with no body - handle gracefully
         let _: serde_json::Value = self.post(&path, request).await?;
         Ok(())
@@ -91,6 +107,12 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Vec<Contract>`] containing the list of contracts.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -110,7 +132,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_contracts(&self) -> Result<Vec<Contract>> {
-        let path = "/issuing/contracts";
+        let path = "/contracts";
         self.get(path).await
     }
 
@@ -124,6 +146,14 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (200 OK) with response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Contract not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -152,7 +182,7 @@ impl RainClient {
         contract_id: &Uuid,
         request: &UpdateContractRequest,
     ) -> Result<serde_json::Value> {
-        let path = format!("/issuing/contracts/{contract_id}");
+        let path = format!("/contracts/{contract_id}");
         self.put(&path, request).await
     }
 
@@ -165,6 +195,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Vec<Contract>`] containing the list of contracts.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -185,7 +222,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn get_user_contracts(&self, user_id: &Uuid) -> Result<Vec<Contract>> {
-        let path = format!("/issuing/users/{user_id}/contracts");
+        let path = format!("/users/{user_id}/contracts");
         self.get(&path).await
     }
 
@@ -199,6 +236,15 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (202 Accepted) with no response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - User not found
+    /// - `409` - User already has a contract on this chain
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -227,7 +273,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &CreateUserContractRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/users/{user_id}/contracts");
+        let path = format!("/users/{user_id}/contracts");
         // Returns 202 Accepted with no body - handle gracefully
         let _: serde_json::Value = self.post(&path, request).await?;
         Ok(())
@@ -240,7 +286,7 @@ impl RainClient {
     /// Get smart contract information for a company (blocking)
     #[cfg(feature = "sync")]
     pub fn get_company_contracts_blocking(&self, company_id: &Uuid) -> Result<Vec<Contract>> {
-        let path = format!("/issuing/companies/{company_id}/contracts");
+        let path = format!("/companies/{company_id}/contracts");
         self.get_blocking(&path)
     }
 
@@ -251,7 +297,7 @@ impl RainClient {
         company_id: &Uuid,
         request: &CreateCompanyContractRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/companies/{company_id}/contracts");
+        let path = format!("/companies/{company_id}/contracts");
         // Returns 202 Accepted with no body - handle gracefully
         let _: serde_json::Value = self.post_blocking(&path, request)?;
         Ok(())
@@ -260,7 +306,7 @@ impl RainClient {
     /// Get smart contract information for an authorized user tenant (blocking)
     #[cfg(feature = "sync")]
     pub fn get_contracts_blocking(&self) -> Result<Vec<Contract>> {
-        let path = "/issuing/contracts";
+        let path = "/contracts";
         self.get_blocking(path)
     }
 
@@ -271,14 +317,14 @@ impl RainClient {
         contract_id: &Uuid,
         request: &UpdateContractRequest,
     ) -> Result<serde_json::Value> {
-        let path = format!("/issuing/contracts/{contract_id}");
+        let path = format!("/contracts/{contract_id}");
         self.put_blocking(&path, request)
     }
 
     /// Get smart contract information for a user (blocking)
     #[cfg(feature = "sync")]
     pub fn get_user_contracts_blocking(&self, user_id: &Uuid) -> Result<Vec<Contract>> {
-        let path = format!("/issuing/users/{user_id}/contracts");
+        let path = format!("/users/{user_id}/contracts");
         self.get_blocking(&path)
     }
 
@@ -289,7 +335,7 @@ impl RainClient {
         user_id: &Uuid,
         request: &CreateUserContractRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/users/{user_id}/contracts");
+        let path = format!("/users/{user_id}/contracts");
         // Returns 202 Accepted with no body - handle gracefully
         let _: serde_json::Value = self.post_blocking(&path, request)?;
         Ok(())

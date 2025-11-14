@@ -18,6 +18,13 @@ impl RainClient {
     ///
     /// Returns a [`Key`] containing the created key information (including the key itself).
     ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
+    ///
     /// # Examples
     ///
     /// ```no_run
@@ -42,7 +49,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn create_key(&self, request: &CreateKeyRequest) -> Result<Key> {
-        let path = "/issuing/keys";
+        let path = "/keys";
         self.post(path, request).await
     }
 
@@ -55,6 +62,13 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (204 No Content) with no response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Key not found
+    /// - `500` - Internal server error
     ///
     /// # Examples
     ///
@@ -75,7 +89,7 @@ impl RainClient {
     /// ```
     #[cfg(feature = "async")]
     pub async fn delete_key(&self, key_id: &Uuid) -> Result<()> {
-        let path = format!("/issuing/keys/{key_id}");
+        let path = format!("/keys/{key_id}");
         self.delete(&path).await
     }
 
@@ -86,14 +100,14 @@ impl RainClient {
     /// Create a key (blocking)
     #[cfg(feature = "sync")]
     pub fn create_key_blocking(&self, request: &CreateKeyRequest) -> Result<Key> {
-        let path = "/issuing/keys";
+        let path = "/keys";
         self.post_blocking(path, request)
     }
 
     /// Delete a key (blocking)
     #[cfg(feature = "sync")]
     pub fn delete_key_blocking(&self, key_id: &Uuid) -> Result<()> {
-        let path = format!("/issuing/keys/{key_id}");
+        let path = format!("/keys/{key_id}");
         self.delete_blocking(&path)
     }
 }

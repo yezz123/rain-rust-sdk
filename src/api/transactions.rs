@@ -17,12 +17,18 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Vec<Transaction>`] containing the list of transactions.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn list_transactions(
         &self,
         params: &ListTransactionsParams,
     ) -> Result<Vec<Transaction>> {
-        let path = "/issuing/transactions";
+        let path = "/transactions";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -41,9 +47,16 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns a [`Transaction`] containing the transaction information.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `401` - Invalid authorization
+    /// - `404` - Transaction not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn get_transaction(&self, transaction_id: &Uuid) -> Result<Transaction> {
-        let path = format!("/issuing/transactions/{transaction_id}");
+        let path = format!("/transactions/{transaction_id}");
         self.get(&path).await
     }
 
@@ -57,13 +70,21 @@ impl RainClient {
     /// # Returns
     ///
     /// Returns success (204 No Content) with no response body.
+    ///
+    /// # Errors
+    ///
+    /// This method can return the following errors:
+    /// - `400` - Invalid request
+    /// - `401` - Invalid authorization
+    /// - `404` - Transaction not found
+    /// - `500` - Internal server error
     #[cfg(feature = "async")]
     pub async fn update_transaction(
         &self,
         transaction_id: &Uuid,
         request: &UpdateTransactionRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/transactions/{transaction_id}");
+        let path = format!("/transactions/{transaction_id}");
         let _: serde_json::Value = self.patch(&path, request).await?;
         Ok(())
     }
@@ -79,7 +100,7 @@ impl RainClient {
     /// Returns the receipt as raw bytes (application/octet-stream).
     #[cfg(feature = "async")]
     pub async fn get_transaction_receipt(&self, transaction_id: &Uuid) -> Result<Vec<u8>> {
-        let path = format!("/issuing/transactions/{transaction_id}/receipt");
+        let path = format!("/transactions/{transaction_id}/receipt");
         self.get_bytes(&path).await
     }
 
@@ -99,7 +120,7 @@ impl RainClient {
         transaction_id: &Uuid,
         request: &UploadReceiptRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/transactions/{transaction_id}/receipt");
+        let path = format!("/transactions/{transaction_id}/receipt");
 
         use reqwest::multipart::{Form, Part};
         let form = Form::new().part(
@@ -120,7 +141,7 @@ impl RainClient {
         &self,
         params: &ListTransactionsParams,
     ) -> Result<Vec<Transaction>> {
-        let path = "/issuing/transactions";
+        let path = "/transactions";
         let query_string = serde_urlencoded::to_string(params)?;
         let full_path = if query_string.is_empty() {
             path.to_string()
@@ -133,7 +154,7 @@ impl RainClient {
     /// Get a transaction by its id (blocking)
     #[cfg(feature = "sync")]
     pub fn get_transaction_blocking(&self, transaction_id: &Uuid) -> Result<Transaction> {
-        let path = format!("/issuing/transactions/{transaction_id}");
+        let path = format!("/transactions/{transaction_id}");
         self.get_blocking(&path)
     }
 
@@ -144,7 +165,7 @@ impl RainClient {
         transaction_id: &Uuid,
         request: &UpdateTransactionRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/transactions/{transaction_id}");
+        let path = format!("/transactions/{transaction_id}");
         let _: serde_json::Value = self.patch_blocking(&path, request)?;
         Ok(())
     }
@@ -152,7 +173,7 @@ impl RainClient {
     /// Get a transaction's receipt (blocking)
     #[cfg(feature = "sync")]
     pub fn get_transaction_receipt_blocking(&self, transaction_id: &Uuid) -> Result<Vec<u8>> {
-        let path = format!("/issuing/transactions/{transaction_id}/receipt");
+        let path = format!("/transactions/{transaction_id}/receipt");
         self.get_bytes_blocking(&path)
     }
 
@@ -163,7 +184,7 @@ impl RainClient {
         transaction_id: &Uuid,
         request: &UploadReceiptRequest,
     ) -> Result<()> {
-        let path = format!("/issuing/transactions/{transaction_id}/receipt");
+        let path = format!("/transactions/{transaction_id}/receipt");
 
         use reqwest::blocking::multipart::{Form, Part};
         let form = Form::new().part(
