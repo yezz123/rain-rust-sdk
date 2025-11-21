@@ -153,7 +153,8 @@ pub struct UpdateCardPinRequest {
 #[serde(rename_all = "camelCase")]
 pub struct Card {
     pub id: Uuid,
-    pub company_id: Uuid,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub company_id: Option<Uuid>,
     pub user_id: Uuid,
     pub r#type: CardType,
     pub status: CardStatus,
