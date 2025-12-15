@@ -41,7 +41,7 @@ serde_urlencoded = "0.7"
 chrono = { version = "0.4", features = ["serde"] }
 
 # UUID support
-uuid = { version = "1.0", features = ["v4", "serde"] }
+uuid = { version = "1.19", features = ["v4", "serde"] }
 
 # Error handling
 anyhow = "1.0"
@@ -63,7 +63,7 @@ utoipa-gen = { version = "5.4.0", optional = true }
 
 [dev-dependencies]
 tokio-test = "0.4"
-mockito = "1.2"
+mockito = "1.7"
 serde_test = "1.0"
 
 [lib]
